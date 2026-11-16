@@ -49,10 +49,37 @@ for _s in (sys.stdout, sys.stderr):
         except Exception:
             pass
 
+
+def _known_folder(guid: str, fallback: str) -> Path:
+    """Windows 의 실제 문서 · 다운로드 폴더. OneDrive 백업이나 위치 이동으로 ~/Documents 가 아닐 수 있다
+    (예: C:\\Users\\<이름>\\OneDrive\\문서). Windows 가 아니거나 알아내지 못하면 ~/<fallback>."""
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+            import uuid
+            from ctypes import wintypes
+
+            raw = uuid.UUID(guid).bytes_le
+            fid = (ctypes.c_byte * 16).from_buffer_copy(raw)
+            out = ctypes.c_wchar_p()
+            shell32 = ctypes.windll.shell32
+            shell32.SHGetKnownFolderPath.argtypes = [ctypes.c_void_p, wintypes.DWORD, wintypes.HANDLE, ctypes.POINTER(ctypes.c_wchar_p)]
+            if shell32.SHGetKnownFolderPath(ctypes.byref(fid), 0, None, ctypes.byref(out)) == 0 and out.value:
+                p = Path(out.value)
+                ctypes.windll.ole32.CoTaskMemFree(out)
+                return p
+        except Exception:
+            pass
+    return Path.home() / fallback
+
+
+DOCUMENTS_DIR = _known_folder("FDD39AD0-238F-46AF-ADB4-6C85480369C7", "Documents")  # FOLDERID_Documents
+DOWNLOADS_DIR = _known_folder("374DE290-123F-4565-9164-39C4925E467B", "Downloads")  # FOLDERID_Downloads
+
 BUNDLED = os.environ.get("PLAB_BUNDLED") == "1" or (PROJECT_ROOT / ".bundled").exists()
 SELFTEST = "--selftest" in sys.argv[1:]
 if BUNDLED and not SELFTEST:
-    os.environ.setdefault("PLAB_DATA_DIR", str(Path.home() / "Documents" / "Particle Lab"))
+    os.environ.setdefault("PLAB_DATA_DIR", str(DOCUMENTS_DIR / "Particle Lab"))
     if sys.platform.startswith("win"):
         _log_dir = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "Particle Lab" / "Logs"
     else:
@@ -66,7 +93,7 @@ if BUNDLED and not SELFTEST:
     # 창만 있는 앱에는 표준 출력이 없다 (Windows 에서는 None) → 로그 파일로 돌린다
     sys.stdout = sys.stderr = _log
 FRONT_OUT = PROJECT_ROOT / "app" / "frontend" / "out"
-DEFAULT_DOWNLOAD_DIR = str(Path.home() / "Downloads")
+DEFAULT_DOWNLOAD_DIR = str(DOWNLOADS_DIR)
 
 # 휴대용 번들 (build_desktop_app.sh 산출물) 에서는 의존성이 runtime/site-packages 에 있다.
 # 개발 환경에서는 디렉토리가 없으므로 조용히 패스.
@@ -113,22 +140,40 @@ _DOWNLOAD_HOOK_JS = r"""
     return btoa(bin);
   }
 
+  // <a download> 에 이름이 비어 있으면 브라우저처럼 서버가 준 이름(Content-Disposition)을 쓰고,
+  // 그것도 없으면 주소 끝의 파일 이름을 쓴다. (그러지 않으면 확장자 없는 'download' 로 저장된다)
+  function nameFromDisposition(cd) {
+    if (!cd) return '';
+    const star = /filename\*\s*=\s*([^']*)''([^;]+)/i.exec(cd);
+    if (star) { try { return decodeURIComponent(star[2].trim().replace(/^"|"$/g, '')); } catch (e) {} }
+    const plain = /filename\s*=\s*("([^"]*)"|[^;]+)/i.exec(cd);
+    return plain ? (plain[2] !== undefined ? plain[2] : plain[1]).trim() : '';
+  }
+
+  function nameFromUrl(href) {
+    try {
+      const last = decodeURIComponent(new URL(href, location.href).pathname.split('/').pop() || '');
+      return /\.\w{1,6}$/.test(last) ? last : '';
+    } catch (e) { return ''; }
+  }
+
   async function hrefToB64(href) {
     if (href.startsWith('data:')) {
       const comma = href.indexOf(',');
       const meta = href.slice(5, comma);
       const payload = href.slice(comma + 1);
-      if (meta.includes('base64')) return { b64: payload, mime: meta.split(';')[0] };
+      if (meta.includes('base64')) return { b64: payload, mime: meta.split(';')[0], name: '' };
       const decoded = decodeURIComponent(payload);
       const bytes = new Uint8Array(decoded.length);
       for (let i = 0; i < decoded.length; i++) bytes[i] = decoded.charCodeAt(i) & 0xff;
-      return { b64: bytesToB64(bytes), mime: meta.split(';')[0] };
+      return { b64: bytesToB64(bytes), mime: meta.split(';')[0], name: '' };
     }
     const r = await fetch(href, { credentials: 'same-origin' });
     if (!r.ok) throw new Error('fetch ' + r.status);
     const blob = await r.blob();
     const buf = await blob.arrayBuffer();
-    return { b64: bytesToB64(new Uint8Array(buf)), mime: blob.type || '' };
+    const name = href.startsWith('blob:') ? '' : (nameFromDisposition(r.headers.get('content-disposition')) || nameFromUrl(href));
+    return { b64: bytesToB64(new Uint8Array(buf)), mime: blob.type || '', name: name };
   }
 
   function isPdf(name, mime) {
@@ -158,8 +203,8 @@ _DOWNLOAD_HOOK_JS = r"""
     e.stopPropagation();
     const name = a.getAttribute('download') || '';
     try {
-      const { b64, mime } = await hrefToB64(a.href || raw);
-      await dispatch(name, b64, mime);
+      const got = await hrefToB64(a.href || raw);
+      await dispatch(name || got.name, got.b64, got.mime);
     } catch (err) {
       console.error('[plab] click intercept:', err);
       alert('다운로드 실패: ' + (err && err.message ? err.message : String(err)));
@@ -205,8 +250,8 @@ _DOWNLOAD_HOOK_JS = r"""
     e.preventDefault();
     e.stopPropagation();
     try {
-      const { b64, mime } = await hrefToB64(href);
-      await dispatch(a.getAttribute('download') || 'download', b64, mime);
+      const got = await hrefToB64(href);
+      await dispatch(a.getAttribute('download') || got.name || 'download', got.b64, got.mime);
     } catch (err) {
       console.error('[plab] blank intercept:', err);
     }
@@ -315,7 +360,9 @@ class JsApi:
     """
 
     def __init__(self) -> None:
-        self.window = None  # 메인 창
+        # 메인 창. 이름이 _ 로 시작해야 한다: pywebview 는 js_api 의 공개 속성을 재귀로 훑어 JS 에 노출하는데,
+        # 창 객체가 공개돼 있으면 Windows 에서 창 내부(.NET 컨트롤)까지 다른 스레드에서 파고들다 창이 멈춘다.
+        self._window = None
         self._last_dir = DEFAULT_DOWNLOAD_DIR
         # token → (temp_path, preview_window) — 미리보기 창 추적
         self._previews: dict[str, tuple[str, "object"]] = {}
@@ -425,15 +472,16 @@ class JsApi:
 
     # ---------- helpers ----------
     def _ask_save_path(self, default_name: str) -> "str | None":
-        target = self.window
+        target = self._window
         if target is None and self._previews:
             target = next(iter(self._previews.values()))[1]
         if target is None:
             return None
         try:
             import webview  # type: ignore
+            save = webview.FileDialog.SAVE if hasattr(webview, "FileDialog") else webview.SAVE_DIALOG
             result = target.create_file_dialog(
-                webview.SAVE_DIALOG,
+                save,
                 directory=self._last_dir,
                 save_filename=default_name,
             )
@@ -475,6 +523,36 @@ def _pick_port(preferred: int = 8765) -> int:
         return s.getsockname()[1]
 
 
+def _window_geometry(want_w: int, want_h: int, min_w: int, min_h: int) -> dict:
+    """창 크기를 화면에 맞춘다 (Windows). 1366×768 · 1536×864(150%) 같은 노트북 화면에서는 기본 창(1440×900)이
+    작업 영역보다 커서 아래쪽이 화면 밖으로 나간다 → 그럴 때는 최대화로 시작하고, 복원 크기 · 최소 크기도 화면 안으로 줄인다.
+    크기는 pywebview 와 같은 논리 픽셀(96 DPI 기준)로 다룬다."""
+    geo = {"width": want_w, "height": want_h, "min_size": (min_w, min_h)}
+    if not sys.platform.startswith("win"):
+        return geo
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        u = ctypes.windll.user32
+        r = wintypes.RECT()
+        if not u.SystemParametersInfoW(0x0030, 0, ctypes.byref(r), 0):  # SPI_GETWORKAREA
+            return geo
+        w, h = r.right - r.left, r.bottom - r.top
+        if u.IsProcessDPIAware():  # 이미 DPI 인식이면 물리 픽셀 → 논리 픽셀
+            dpi = u.GetDpiForSystem() if hasattr(u, "GetDpiForSystem") else 96
+            w, h = w * 96 // max(dpi, 1), h * 96 // max(dpi, 1)
+        margin = 24
+        if want_w + margin <= w and want_h + margin <= h:
+            return geo
+        geo.update(width=min(want_w, w - margin), height=min(want_h, h - margin),
+                   min_size=(min(min_w, w), min(min_h, h)), maximized=True)
+        print(f"[launcher] work area {w}x{h} < window {want_w}x{want_h} → start maximized", file=sys.stderr)
+    except Exception as e:  # noqa: BLE001
+        print(f"[launcher] screen size check failed: {e}", file=sys.stderr)
+    return geo
+
+
 def _wait_health(url: str, timeout: float = 60.0) -> bool:
     deadline = time.time() + timeout
     while time.time() < deadline:
@@ -506,6 +584,11 @@ def main() -> None:
         import webview  # type: ignore
     except ImportError:
         _die("pywebview 미설치. pip install pywebview")
+
+    # <a download> 가 아닌 보통 링크로 파일을 주는 곳도 있다 (예: AI 진단의 픽셀별 CSV — 서버가 attachment 로 응답).
+    # pywebview 는 기본으로 이런 다운로드를 말없이 취소하므로, 허용해서 저장 대화상자가 뜨게 한다.
+    if hasattr(webview, "settings"):
+        webview.settings["ALLOW_DOWNLOADS"] = True
 
     from app.main import app as fastapi_app  # type: ignore
 
@@ -549,12 +632,10 @@ def main() -> None:
     window = webview.create_window(
         "Particle Lab",
         url=f"{base_url}/home/",
-        width=1440,
-        height=900,
-        min_size=(1024, 700),
         js_api=js_api,
+        **_window_geometry(1440, 900, 1024, 700),
     )
-    js_api.window = window
+    js_api._window = window
 
     def _inject_hook() -> None:
         try:
