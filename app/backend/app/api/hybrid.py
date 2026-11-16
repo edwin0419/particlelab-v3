@@ -69,6 +69,21 @@ ROLE_SUFFIXES = ("_image", "_img", "_orig", "_label", "_mask", "_gt")
 
 # ─────────────── helpers ───────────────
 
+# 그림에 한글(범례)이 들어간다. matplotlib 기본 글꼴(DejaVu Sans)에는 한글이 없어 네모로 나오므로,
+# 이 컴퓨터에 있는 한글 글꼴을 뒤에 붙여 없는 글자만 거기서 가져오게 한다 (Windows: 맑은 고딕, macOS: AppleGothic).
+_KO_FONTS = ("Malgun Gothic", "AppleGothic", "Apple SD Gothic Neo", "NanumGothic", "Noto Sans KR", "Noto Sans CJK KR")
+_font_family: Optional[list] = None
+
+
+def _figure_fonts() -> list:
+    global _font_family
+    if _font_family is None:
+        from matplotlib import font_manager
+
+        have = {f.name for f in font_manager.fontManager.ttflist}
+        _font_family = ["DejaVu Sans"] + [n for n in _KO_FONTS if n in have][:1]
+    return _font_family
+
 
 def _make_d_histogram_figure(
     d_values: np.ndarray, tau: float, bin_width: float = 1.0,
@@ -79,6 +94,13 @@ def _make_d_histogram_figure(
     반환: (png_bytes, bin_centers, counts)
     파란 막대 = d_+ < τ* (좁은 틈 후보), 회색 막대 = d_+ ≥ τ*, 빨간 점선 = τ*.
     """
+    with plt.rc_context({"font.family": _figure_fonts()}):
+        return _draw_d_histogram(d_values, tau, bin_width)
+
+
+def _draw_d_histogram(
+    d_values: np.ndarray, tau: float, bin_width: float,
+) -> tuple[bytes, np.ndarray, np.ndarray]:
     finite = d_values[np.isfinite(d_values)]
     if finite.size == 0:
         # 빈 히스토그램
