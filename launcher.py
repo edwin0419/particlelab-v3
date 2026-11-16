@@ -41,6 +41,14 @@ else:
 BACKEND_DIR = PROJECT_ROOT / "app" / "backend"
 
 # 앱 번들 안에는 쓸 수 없다 (읽기 전용 dmg · 서명) → 결과와 로그는 사용자 폴더로 보낸다
+# Windows 콘솔은 기본 인코딩(cp949 · cp1252)에 없는 글자를 찍으면 죽는다 → UTF-8 로, 못 찍는 글자는 바꿔서 찍는다
+for _s in (sys.stdout, sys.stderr):
+    if _s is not None and hasattr(_s, "reconfigure"):
+        try:
+            _s.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
 BUNDLED = os.environ.get("PLAB_BUNDLED") == "1" or (PROJECT_ROOT / ".bundled").exists()
 SELFTEST = "--selftest" in sys.argv[1:]
 if BUNDLED and not SELFTEST:
