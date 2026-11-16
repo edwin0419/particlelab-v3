@@ -54,7 +54,7 @@ cd app\frontend; npm run dev
 
 `tools/build_mac_app.sh` 를 실행하면 `dist/Particle Lab.app` 과 `dist/ParticleLab-<버전>-arm64.dmg` 가 나옵니다 (Apple Silicon 전용, 약 700MB). 받는 사람은 dmg 를 열어 앱을 응용 프로그램으로 끌어다 놓기만 하면 되고, Python · Node 를 설치할 필요가 없습니다.
 
-- 앱은 창 하나로 뜨고 (`launcher.py`), 분석 결과는 `~/Documents/Particle Lab/runs`, 로그는 `~/Library/Logs/Particle Lab/app.log` 에 저장됩니다.
+- 앱은 창 하나로 뜨고 (`launcher.py`), 분석 결과는 `~/Documents/Particle Lab/runs`, 로그는 `~/Library/Logs/Particle Lab/app.log` 에 저장됩니다. (Windows 는 아래 "Windows 설치 파일 만들기" 참고)
 - 서명은 임시 서명입니다. 다른 Mac 에서 처음 열 때는 우클릭 → 열기가 필요합니다 (Apple 개발자 서명 · 공증은 포함되어 있지 않습니다).
 - 만드는 Mac 에는 `SETUP.command` 를 마친 환경, Xcode 명령줄 도구, 인터넷(파이썬 런타임을 한 번 내려받음)이 필요합니다.
 
@@ -64,6 +64,24 @@ GitHub 저장소의 **Actions → Windows installer → Run workflow** 를 누�
 
 - 받는 사람은 설치 파일만 실행하면 됩니다 (관리자 권한 · Python · Node 불필요). PyTorch 는 CPU 판이 들어가므로 AI Hybrid 는 GPU 판보다 느립니다.
 - 서명하지 않은 설치 파일이라 처음 실행할 때 Windows SmartScreen 경고가 뜹니다 ("추가 정보 → 실행").
+- 설치 위치는 `%LOCALAPPDATA%\Programs\Particle Lab`, 결과는 Windows 의 실제 문서 폴더(OneDrive 로 옮겨졌으면 그쪽)의 `Particle Lab\runs`, 로그는 `%LOCALAPPDATA%\Particle Lab\Logs\app.log` 입니다. 제거해도 결과 폴더는 남습니다.
+- 화면 글꼴(G마켓 산스)은 앱에 들어 있어 인터넷이 없어도 같은 화면이 나옵니다 (`app/frontend/public/fonts`).
+
+Windows PC 에서 직접 만들기 (Windows 10/11, 기본 PowerShell 5.1 로 동작 확인):
+
+1. 준비물 설치 — 한 번만. C++ 빌드 도구는 수 GB 이고 관리자 확인 창이 뜹니다.
+   ```powershell
+   winget install --id OpenJS.NodeJS.LTS -e
+   winget install --id JRSoftware.InnoSetup -e
+   winget install --id Microsoft.VisualStudio.2022.BuildTools -e --override "--quiet --wait --norestart --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+   ```
+2. "x64 Native Tools Command Prompt for VS 2022" 를 열고 (또는 `vcvars64.bat` 을 부른 cmd 에서) 저장소 폴더에서:
+   ```bat
+   powershell -ExecutionPolicy Bypass -File tools\build_win_app.ps1
+   ```
+   약 15~25분 걸리고, 마지막에 번들이 스스로 뜨는지 점검(`launcher.py --selftest`)한 뒤 `dist\ParticleLab-Setup-<버전>.exe` 를 만듭니다.
+
+`tools\build_win_app.ps1` 은 한글 주석 때문에 UTF-8 (BOM 포함) 으로 저장되어 있어야 PowerShell 5.1 이 제대로 읽습니다. 고칠 때 인코딩을 바꾸지 마세요.
 
 ## 화면
 
