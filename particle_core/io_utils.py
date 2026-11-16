@@ -1,6 +1,7 @@
 """유니코드(한글) 경로 안전 이미지 IO 및 파일명 유틸."""
 from __future__ import annotations
 
+import hashlib
 import logging
 import re
 from pathlib import Path
@@ -16,6 +17,24 @@ IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp")
 
 # 1k 기준 μm/px: 1.8k 에서 30μm/272px 실측 → base_1k = (30/272)*1.8 = 27/136
 _BASE_1K = 27.0 / 136.0
+
+# Windows 는 기본으로 전체 경로 260자까지만 쓸 수 있다 (레지스트리 LongPathsEnabled 와 실행 파일 매니페스트가 둘 다 있어야 풀린다).
+# 결과 파일 이름은 원본 파일명 · 샘플명으로 만들므로, 이름이 길면 저장이 조용히 실패한다 → 경로가 넘칠 때만 이름을 줄인다.
+_MAX_OUT_PATH = 250
+# 출력 폴더 뒤에 붙는 가장 긴 하위 경로 + 접미사 (예: histograms\After_SampleWide\<샘플>_Aspect_Ratio_SampleWide_hist_comparison.png)
+_OUT_NAME_OVERHEAD = 80
+
+
+def fit_stem(out_dir: PathLike, name: str) -> str:
+    """출력 폴더 안의 결과 파일 이름에 쓸 stem. 경로가 한도를 넘을 때만 앞부분 + '~' + 해시 6자로 줄인다.
+
+    사진 stem 과 샘플명에 같은 규칙을 쓰므로, 줄어든 뒤에도 앞부분(샘플 접두어)과 서로의 대응이 유지된다.
+    """
+    room = _MAX_OUT_PATH - len(str(Path(out_dir).resolve())) - _OUT_NAME_OVERHEAD
+    if len(name) <= max(room, 8):
+        return name
+    tag = hashlib.sha1(name.encode("utf-8")).hexdigest()[:6]
+    return f"{name[: max(room - 7, 1)]}~{tag}"
 
 
 def imread_unicode(path: PathLike, flags: int = cv2.IMREAD_UNCHANGED) -> Optional[np.ndarray]:
@@ -119,6 +138,6 @@ def crop_bottom(gray: np.ndarray, ratio: float) -> np.ndarray:
 
 
 __all__ = [
-    "IMAGE_EXTS", "imread_unicode", "imwrite_unicode", "to_gray_u8", "natural_key",
+    "IMAGE_EXTS", "imread_unicode", "imwrite_unicode", "fit_stem", "to_gray_u8", "natural_key",
     "sample_name_of", "pixel_to_micro_from_name", "list_images", "crop_bottom",
 ]

@@ -156,6 +156,10 @@ def tuner_segment(
         seg = engine.segment(gray_pre)
     except FileNotFoundError as e:
         raise HTTPException(400, str(e))
+    except MemoryError:
+        h, w = gray.shape[:2]
+        raise HTTPException(500, f"메모리가 부족해 분할하지 못했습니다 — 사진({w}×{h})이 너무 큽니다. "
+                                 "AI Hybrid 는 사진이 클수록 메모리와 시간이 많이 듭니다. 사진을 줄이거나 Watershed 를 쓰세요.")
     except Exception as e:  # noqa: BLE001
         raise HTTPException(500, f"분할 실패 ({p.engine}): {e}")
     timing["segment"] = (time.time() - t0) * 1000

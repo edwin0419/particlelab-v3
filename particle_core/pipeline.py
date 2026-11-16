@@ -18,7 +18,7 @@ import pandas as pd
 from . import spatial, stats, viz
 from .engines import SegmentationEngine
 from .filters import apply_after_filter
-from .io_utils import imread_unicode, imwrite_unicode, natural_key, sample_name_of, to_gray_u8
+from .io_utils import fit_stem, imread_unicode, imwrite_unicode, natural_key, sample_name_of, to_gray_u8
 from .measure import measure_params_for, measure_particles
 from .params import AnalysisParams
 from .preprocess import apply_sem_preprocessing
@@ -66,11 +66,33 @@ class BatchCancelled(Exception):
     """cancel_check 가 True 를 반환했을 때 내부 제어용."""
 
 
+class ImageReadError(ValueError):
+    """사진 파일을 읽지 못함 (손상 · 빈 파일 · 지원하지 않는 형식). 메시지를 그대로 사용자에게 보여 준다."""
+
+
+def _image_error_text(e: BaseException) -> str:
+    """이미지 1장 처리 실패 → 결과 화면 경고 문구. 사용자가 할 수 있는 일이 있는 경우는 풀어서 쓴다."""
+    if isinstance(e, ImageReadError):
+        return str(e)
+    if isinstance(e, MemoryError):
+        return "메모리가 부족해 분석하지 못했습니다 — 사진이 너무 크거나 다른 프로그램이 메모리를 많이 쓰고 있습니다."
+    return f"{type(e).__name__}: {e}"
+
+
 def _rel(out: Path, p: Path) -> str:
     try:
         return p.resolve().relative_to(out.resolve()).as_posix()
     except ValueError:
         return p.as_posix()
+
+
+def _keep(files: Dict[str, str], key: str, out: Path, p: Path, warnings: List[str], who: str) -> None:
+    """결과 파일이 실제로 생겼을 때만 결과 목록에 넣는다. 못 만들었으면 경고로 알린다
+    (저장 함수들은 실패해도 예외 없이 넘어가므로 — 경로 길이 한도, 디스크 가득 참, 권한 등)."""
+    if p.is_file():
+        files[key] = _rel(out, p)
+    else:
+        warnings.append(f"{who}: 결과 파일을 저장하지 못했습니다 — {p.name}")
 
 
 def _avg_row(sample: str, rows: List[dict]) -> dict:
@@ -94,7 +116,7 @@ def _process_image(path: Path, sample: str, out: Path, params: AnalysisParams, e
 
     raw = imread_unicode(path)
     if raw is None:
-        raise ValueError(f"이미지 로드 실패: {path}")
+        raise ImageReadError("사진을 읽을 수 없어 건너뛰었습니다 — 손상되었거나 빈 파일입니다.")
     gray = to_gray_u8(raw)
     gray_pre = apply_sem_preprocessing(gray, params.sem)          # 크롭 1회, 블러 없음
     seg = engine.segment(gray_pre)                                 # watershed 는 내부에서 블러 1회
@@ -115,6 +137,9 @@ def _process_image(path: Path, sample: str, out: Path, params: AnalysisParams, e
     contours_after = {k: v for k, v in contours.items() if k in after_labels}
 
     files: Dict[str, str] = {}
+    fstem = fit_stem(out, stem)   # 결과 파일 이름용 (경로가 Windows 한도를 넘을 때만 줄어든다)
+    if fstem != stem:
+        warnings.append(f"{filename}: 이름이 길어 결과 파일 이름을 줄였습니다 → {fstem}")
 
     # --- 라벨/윤곽선/비교 이미지 ---
     if getattr(engine, "name", "") == "ai_hybrid":  # AI Hybrid: 입자별 색 채움
@@ -123,20 +148,20 @@ def _process_image(path: Path, sample: str, out: Path, params: AnalysisParams, e
     else:
         img_b = viz.draw_labeled_image(df_before, labels, gray_pre, contours)
         img_a = viz.draw_labeled_image(df_after, labels, gray_pre, contours_after)
-    p = out / "labeled_images" / "before" / f"{stem}_before_labeled.jpg"
-    imwrite_unicode(p, img_b, q); files["labeled_before"] = _rel(out, p)
-    p = out / "labeled_images" / "after" / f"{stem}_after_labeled.jpg"
-    imwrite_unicode(p, img_a, q); files["labeled_after"] = _rel(out, p)
+    p = out / "labeled_images" / "before" / f"{fstem}_before_labeled.jpg"
+    imwrite_unicode(p, img_b, q); _keep(files, "labeled_before", out, p, warnings, filename)
+    p = out / "labeled_images" / "after" / f"{fstem}_after_labeled.jpg"
+    imwrite_unicode(p, img_a, q); _keep(files, "labeled_after", out, p, warnings, filename)
     if params.output.make_contour_only:
-        p = out / "labeled_images" / "before_contour_only" / f"{stem}_before_contour.jpg"
+        p = out / "labeled_images" / "before_contour_only" / f"{fstem}_before_contour.jpg"
         imwrite_unicode(p, viz.draw_contour_only_image(df_before, labels, gray_pre, contours), q)
-        files["contour_before"] = _rel(out, p)
-        p = out / "labeled_images" / "after_contour_only" / f"{stem}_after_contour.jpg"
+        _keep(files, "contour_before", out, p, warnings, filename)
+        p = out / "labeled_images" / "after_contour_only" / f"{fstem}_after_contour.jpg"
         imwrite_unicode(p, viz.draw_contour_only_image(df_after, labels, gray_pre, contours_after), q)
-        files["contour_after"] = _rel(out, p)
-    p = out / "comparison_images" / f"{stem}_comparison.jpg"
+        _keep(files, "contour_after", out, p, warnings, filename)
+    p = out / "comparison_images" / f"{fstem}_comparison.jpg"
     viz.save_comparison_image(img_b, img_a, p, jpeg_quality=q)
-    files["comparison"] = _rel(out, p)
+    _keep(files, "comparison", out, p, warnings, filename)
 
     sp = params.spatial
     boundary_row = agglom_row = dbscan_row = None
@@ -148,12 +173,12 @@ def _process_image(path: Path, sample: str, out: Path, params: AnalysisParams, e
             b_df, b_pairs = spatial.calculate_boundary_distances(df_before, contours, thr, p2m, labels)
             a_df, a_pairs = spatial.calculate_boundary_distances(df_after, contours_after, thr, p2m, labels)
             bm, am = spatial.calculate_boundary_metrics(b_df), spatial.calculate_boundary_metrics(a_df)
-            p = out / "boundary_analysis" / f"{stem}_before_boundary.jpg"
+            p = out / "boundary_analysis" / f"{fstem}_before_boundary.jpg"
             spatial.visualize_boundary_contacts(b_df, contours, b_pairs, labels.shape, p, p2m, thr, gray_pre, labels)
-            files["boundary_before"] = _rel(out, p)
-            p = out / "boundary_analysis" / f"{stem}_after_boundary.jpg"
+            _keep(files, "boundary_before", out, p, warnings, filename)
+            p = out / "boundary_analysis" / f"{fstem}_after_boundary.jpg"
             spatial.visualize_boundary_contacts(a_df, contours_after, a_pairs, labels.shape, p, p2m, thr, gray_pre, labels)
-            files["boundary_after"] = _rel(out, p)
+            _keep(files, "boundary_after", out, p, warnings, filename)
             boundary_row = {"Sample": sample, "ImageName": filename,
                             **{f"{k}_Before": v for k, v in bm.items()},
                             **{f"{k}_After": v for k, v in am.items()}}
@@ -167,10 +192,10 @@ def _process_image(path: Path, sample: str, out: Path, params: AnalysisParams, e
         try:
             df_b_nn = spatial.calculate_nearest_neighbor_distances(df_before, p2m)
             df_a_nn = spatial.calculate_nearest_neighbor_distances(df_after, p2m)
-            p = out / "agglomeration_visualization" / f"{stem}_before_agglomeration.png"
-            spatial.visualize_agglomeration(df_b_nn, p2m, p); files["aggl_before"] = _rel(out, p)
-            p = out / "agglomeration_visualization" / f"{stem}_after_agglomeration.png"
-            spatial.visualize_agglomeration(df_a_nn, p2m, p); files["aggl_after"] = _rel(out, p)
+            p = out / "agglomeration_visualization" / f"{fstem}_before_agglomeration.png"
+            spatial.visualize_agglomeration(df_b_nn, p2m, p); _keep(files, "aggl_before", out, p, warnings, filename)
+            p = out / "agglomeration_visualization" / f"{fstem}_after_agglomeration.png"
+            spatial.visualize_agglomeration(df_a_nn, p2m, p); _keep(files, "aggl_after", out, p, warnings, filename)
             bm, am = spatial.calculate_agglomeration_metrics(df_b_nn), spatial.calculate_agglomeration_metrics(df_a_nn)
             agglom_row = {
                 "Sample": sample, "ImageName": filename,
@@ -192,10 +217,10 @@ def _process_image(path: Path, sample: str, out: Path, params: AnalysisParams, e
             src_a = df_a_nn if df_a_nn is not None else df_after
             cb_df, cb = spatial.analyze_clusters_with_dbscan(src_b, p2m, sp)
             ca_df, ca = spatial.analyze_clusters_with_dbscan(src_a, p2m, sp)
-            p = out / "dbscan_visualization" / f"{stem}_before_dbscan.png"
-            spatial.visualize_dbscan_clusters(cb_df, p); files["dbscan_before"] = _rel(out, p)
-            p = out / "dbscan_visualization" / f"{stem}_after_dbscan.png"
-            spatial.visualize_dbscan_clusters(ca_df, p); files["dbscan_after"] = _rel(out, p)
+            p = out / "dbscan_visualization" / f"{fstem}_before_dbscan.png"
+            spatial.visualize_dbscan_clusters(cb_df, p); _keep(files, "dbscan_before", out, p, warnings, filename)
+            p = out / "dbscan_visualization" / f"{fstem}_after_dbscan.png"
+            spatial.visualize_dbscan_clusters(ca_df, p); _keep(files, "dbscan_after", out, p, warnings, filename)
             dbscan_row = {
                 "Sample": sample, "ImageName": filename,
                 "Total_Particles_Before": cb["total"], "Clusters_Count_Before": cb["n_clusters"],
@@ -236,22 +261,26 @@ def _finish_sample(sample: str, befores: List[pd.DataFrame], out: Path, params: 
     acc["sample_sheets"][sample] = pd.concat([df_b, df_a], ignore_index=True)
 
     sfiles: Dict[str, str] = {}
+    sstem = fit_stem(out, sample)   # 파일 이름용 (사진 stem 과 같은 규칙 → PPT 가 비교 이미지를 같은 샘플로 찾는다)
+    who = f"샘플 {sample}"
     hdir = out / "histograms" / "After_SampleWide"
     for key, col, fname in (("hist_diameter", "Diameter (μm)", "Diameter"),
                             ("hist_circularity", "Circularity", "Circularity"),
                             ("hist_aspect", "Aspect Ratio", "Aspect_Ratio")):
-        p = hdir / f"{sample}_{fname}_SampleWide_hist_comparison.png"
+        p = hdir / f"{sstem}_{fname}_SampleWide_hist_comparison.png"
         viz.save_histogram_comparison(df_b[col], df_a[col], f"{fname}_SampleWide", p,
                                       title=f"{fname}_SampleWide Histogram Comparison: {sample} (After_SampleWide)",
                                       tag="After_SampleWide")
-        sfiles[key] = _rel(out, p)
+        _keep(sfiles, key, out, p, result.warnings, who)
 
     sdir = out / "summary_images"
     font = DEFAULT_FONT if DEFAULT_FONT.is_file() else None
-    p = sdir / f"{sample}_Before_summary.jpg"
-    viz.save_summary_card(sample, stats.stats_for_card(df_b), p, "Before", font); sfiles["summary_before"] = _rel(out, p)
-    p = sdir / f"{sample}_After_summary.jpg"
-    viz.save_summary_card(sample, stats.stats_for_card(df_a), p, "After", font); sfiles["summary_after"] = _rel(out, p)
+    p = sdir / f"{sstem}_Before_summary.jpg"
+    viz.save_summary_card(sample, stats.stats_for_card(df_b), p, "Before", font)
+    _keep(sfiles, "summary_before", out, p, result.warnings, who)
+    p = sdir / f"{sstem}_After_summary.jpg"
+    viz.save_summary_card(sample, stats.stats_for_card(df_a), p, "After", font)
+    _keep(sfiles, "summary_after", out, p, result.warnings, who)
     result.sample_files[sample] = sfiles
 
     row = stats.summary_row(sample, df_b, df_a)
@@ -319,8 +348,8 @@ def run_batch(inp: BatchInput, params: AnalysisParams, engine: SegmentationEngin
                     if brow: s_boundary.append(brow)
                     if arow: s_agglom.append(arow)
                     if drow: s_dbscan.append(drow)
-                except Exception as e:  # noqa: BLE001
-                    result.warnings.append(f"{path.name}: {type(e).__name__}: {e}")
+                except Exception as e:  # noqa: BLE001  (MemoryError 도 Exception 이다)
+                    result.warnings.append(f"{path.name}: {_image_error_text(e)}")
                     logger.warning("이미지 처리 실패 %s: %s\n%s", path.name, e, traceback.format_exc())
                 done += 1
                 progress(int(done / total * 85), f"{done}/{total} {path.name}")
@@ -409,8 +438,9 @@ def run_batch(inp: BatchInput, params: AnalysisParams, engine: SegmentationEngin
         pptx_path = out / "particle_analysis_result.pptx"
         try:
             create_summary_ppt(out / "comparison_images", out / "summary_images", pptx_path,
-                               only_samples=[str(r.get("Sample")) for r in result.samples],
-                               only_stems=[Path(p).stem for p in inp.images])
+                               # 결과 파일 이름 기준으로 찾으므로 줄인 이름(fit_stem)으로 넘긴다
+                               only_samples=[fit_stem(out, str(r.get("Sample"))) for r in result.samples],
+                               only_stems=[fit_stem(out, Path(p).stem) for p in inp.images])
             result.pptx_path = str(pptx_path)
         except Exception as e:  # noqa: BLE001
             result.warnings.append(f"PPT 작성 실패: {e}")
