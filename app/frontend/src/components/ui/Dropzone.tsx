@@ -11,6 +11,25 @@ export function isImageFile(f: File): boolean {
   return IMAGE_EXTS.some((e) => n.endsWith(e));
 }
 
+/** 실제로 읽히는 파일과 못 읽는 파일(이름)을 나눈다. 순서는 유지.
+ *  고를 때는 목록에 보여도, 브라우저가 디스크에서 읽지 못하는 파일이 있다 (Windows 에서 전체 경로가 260자를 넘는 경우,
+ *  고른 뒤 옮기거나 지운 경우). 보통은 첫 바이트만 읽어 보므로 큰 파일도 빠르다.
+ *  단, 경로가 너무 길어 정보를 못 읽은 파일은 크기가 0 으로 오고 0바이트 조각 읽기는 그냥 성공한다 →
+ *  크기 0 인 파일은 통째로 읽어 본다 (진짜 빈 파일은 성공하고, 못 읽는 파일은 NotFoundError). */
+export async function splitReadable(files: File[]): Promise<{ ok: File[]; bad: string[] }> {
+  const res = await Promise.all(
+    files.map(async (f) => {
+      try {
+        await (f.size === 0 ? f.arrayBuffer() : f.slice(0, 1).arrayBuffer());
+        return true;
+      } catch {
+        return false;
+      }
+    }),
+  );
+  return { ok: files.filter((_, i) => res[i]), bad: files.filter((_, i) => !res[i]).map((f) => f.name) };
+}
+
 export interface DropzoneProps {
   multiple?: boolean;
   /** 폴더 선택 (webkitdirectory). multiple 암시 */

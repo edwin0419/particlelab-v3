@@ -22,7 +22,8 @@ export class ApiError extends Error {
   status: number;
   body: string;
   constructor(status: number, body: string) {
-    super(`${status}: ${body}`);
+    // 화면에는 서버가 준 설명만 보여 준다 ("404: 경로 없음 …" 대신 "경로 없음 …"). 설명이 없을 때만 HTTP 코드.
+    super(body.trim() ? body : `HTTP ${status}`);
     this.name = "ApiError";
     this.status = status;
     this.body = body;
@@ -52,7 +53,16 @@ function get<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 function postForm<T>(path: string, fd: FormData, signal?: AbortSignal): Promise<T> {
-  return fetch(`${API_BASE}${path}`, { method: "POST", body: fd, signal }).then((r) => jsonOrThrow<T>(r));
+  return fetch(`${API_BASE}${path}`, { method: "POST", body: fd, signal }).then(
+    (r) => jsonOrThrow<T>(r),
+    (e: unknown) => {
+      // 요청을 아예 보내지 못한 경우 브라우저는 'Failed to fetch' 만 준다 → 흔한 원인을 알려 준다 (취소는 그대로 전달)
+      if (e instanceof TypeError) {
+        throw new Error("요청을 보내지 못했습니다 — 올린 파일을 읽을 수 없거나(옮김 · 삭제 · 전체 경로 260자 초과) 앱 서버가 응답하지 않습니다.");
+      }
+      throw e;
+    },
+  );
 }
 
 // ───────────────────────── 기존 유지 ─────────────────────────

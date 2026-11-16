@@ -45,7 +45,7 @@ import { BigStat, PILL, fmt } from "@/components/analysis/parts";
 import ParamsPanel from "@/components/params/ParamsPanel";
 import ImageViewer from "@/components/ui/ImageViewer";
 import EngineSwitch from "@/components/ui/EngineSwitch";
-import Dropzone, { isImageFile } from "@/components/ui/Dropzone";
+import Dropzone, { isImageFile, splitReadable } from "@/components/ui/Dropzone";
 import Chip from "@/components/ui/Chip";
 import ProgressBar from "@/components/ui/ProgressBar";
 import {
@@ -107,6 +107,12 @@ export default function AnalysisPage() {
   // ── 입력
   const [source, setSource] = useState<InputMode>("upload");
   const [inputPath, setInputPath] = useState("");
+  const [skipped, setSkipped] = useState<string[]>([]); // 읽을 수 없어 목록에서 뺀 업로드 파일 이름
+  // 폴더 경로 예시는 운영체제에 맞춘다 (정적 페이지라 화면이 뜬 뒤에 바꾼다)
+  const [pathHint, setPathHint] = useState("/Volumes/드라이브/sem_images");
+  useEffect(() => {
+    if (/Windows/i.test(navigator.userAgent)) setPathHint("D:\\SEM\\sem_images");
+  }, []);
   const [pathErr, setPathErr] = useState<string | null>(null);
   const [browserOpen, setBrowserOpen] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
@@ -191,8 +197,12 @@ export default function AnalysisPage() {
     };
   }, [inputPath, source]);
 
-  const onUpload = (fs: File[]) => {
-    const imgs = fs.filter(isImageFile);
+  const onUpload = async (fs: File[]) => {
+    // 창 안의 브라우저가 디스크에서 읽지 못하는 파일은 미리 뺀다 (전체 경로가 260자를 넘는 깊은 폴더, 고른 뒤 옮기거나 지운 파일 등).
+    // 섞여 있으면 미리보기가 'Failed to fetch' 로 실패하고, 전체 분석은 요청 자체가 실패해 나머지 사진까지 분석되지 않는다.
+    const { ok: imgs, bad } = await splitReadable(fs.filter(isImageFile));
+    // 오류 칸(error)은 이미지 선택이 바뀔 때 지워지므로, 업로드 칸 아래에 따로 남긴다
+    setSkipped(bad);
     items.forEach((i) => i.file && URL.revokeObjectURL(i.thumb));
     const batchId = Date.now();
     const next = imgs.map((f, idx) => ({
@@ -209,6 +219,7 @@ export default function AnalysisPage() {
   const switchSource = (s: InputMode) => {
     if (s === source) return;
     items.forEach((i) => i.file && URL.revokeObjectURL(i.thumb));
+    setSkipped([]);
     setSource(s);
     setItems([]);
     setSelKey(null);
@@ -465,7 +476,8 @@ export default function AnalysisPage() {
   }, [view, origUrl, previewPng, result, selBatch, jobId]);
 
   const viewAvailable = (k: ViewKey): boolean => {
-    if (k === "original") return !!origUrl;
+    // 업로드한 TIFF 는 브라우저가 그리지 못해 origUrl 이 없다 → 미리보기 결과의 원본(서버가 그린 것)이 있으면 쓸 수 있다
+    if (k === "original") return !!origUrl || !!result?.views.original;
     if (k === "preprocessed") return !!previewPng || !!result?.views.preprocessed;
     if (k === "result_after") return !!selBatch?.files.labeled_after;
     if (k === "result_comparison") return !!selBatch?.files.comparison;
@@ -567,7 +579,7 @@ export default function AnalysisPage() {
                   <input
                     type="text"
                     className="flex-1 min-w-0 border border-line rounded-md px-2 py-1.5 text-xs bg-white font-mono"
-                    placeholder="/Volumes/드라이브/sem_images"
+                    placeholder={pathHint}
                     value={inputPath}
                     onChange={(e) => setInputPath(e.target.value)}
                   />
@@ -580,6 +592,12 @@ export default function AnalysisPage() {
             ) : (
               <>
                 <Dropzone multiple onFiles={onUpload} filled={items.length > 0} compact accept=".jpg,.jpeg,.png,.tif,.tiff,.bmp,image/*" />
+                {skipped.length > 0 && (
+                  <div className="text-[11px] text-danger bg-danger-soft border border-danger-line rounded-md px-3 py-2 break-words" data-testid="skipped-files">
+                    읽을 수 없는 파일 {skipped.length}개를 목록에서 뺐습니다: {skipped.slice(0, 3).join(", ")}
+                    {skipped.length > 3 ? " …" : ""} — 폴더 경로가 너무 길거나(260자 초과) 파일을 옮겼을 수 있습니다. 짧은 경로로 옮기거나 &apos;폴더 경로&apos; 방식을 쓰세요.
+                  </div>
+                )}
                 <p className="text-[10.5px] text-text-faint leading-snug">
                   올린 이미지는 새로고침하면 사라지고, 전체 분석 때 서버로 다시 전송됩니다. 이미지가 많으면 <b className="font-semibold text-text-mute">폴더 경로</b>가 더 빠릅니다.
                 </p>

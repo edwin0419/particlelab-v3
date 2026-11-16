@@ -1,0 +1,11 @@
+Gmarket Sans (G마켓 산스) — GmarketSansLight.woff, GmarketSansMedium.woff, GmarketSansBold.woff
+
+Copyright (c) Gmarket (G마켓). Version 1.0.
+The font files are bundled unmodified with Particle Lab so that the app renders the same without internet access
+(they were previously loaded at runtime from https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/).
+
+License: Gmarket Sans is a free font distributed under a license based on the SIL Open Font License 1.1
+(https://openfontlicense.org). It may be used for commercial and non-commercial purposes and embedded in /
+redistributed with software. The font files themselves may not be sold on their own.
+Reference: https://www.sandollcloud.com/free-font/15744/Gmarket-Sans
+Check the copyright holder's current license terms before redistributing the fonts separately from this app.

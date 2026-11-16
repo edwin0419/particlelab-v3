@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 
+import { splitReadable } from "@/components/ui/Dropzone";
+
 
 export function MultiFileDropzone({
   files, setFiles, label, emptyText, emptyHint,
@@ -13,11 +15,14 @@ export function MultiFileDropzone({
   emptyHint?: string;
 }) {
   const [hover, setHover] = useState(false);
+  const [skipped, setSkipped] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function add(newFiles: FileList | File[] | null) {
+  async function add(newFiles: FileList | File[] | null) {
     if (!newFiles) return;
-    const arr = Array.from(newFiles).filter((f) => f.type.startsWith("image/"));
+    // 브라우저가 디스크에서 읽지 못하는 파일(전체 경로 260자 초과, 옮긴 파일 등)은 빼고 알린다
+    const { ok: arr, bad } = await splitReadable(Array.from(newFiles).filter((f) => f.type.startsWith("image/")));
+    setSkipped(bad);
     if (arr.length === 0) return;
     const merged = [...files];
     for (const f of arr) {
@@ -85,6 +90,12 @@ export function MultiFileDropzone({
           onChange={(e) => add(e.target.files)}
         />
       </div>
+
+      {skipped.length > 0 && (
+        <div className="mt-1.5 text-[10.5px] text-bad leading-snug break-words">
+          읽을 수 없는 파일 {skipped.length}개를 뺐습니다: {skipped.slice(0, 3).join(", ")}{skipped.length > 3 ? " …" : ""} — 폴더 경로가 너무 길거나(260자 초과) 파일을 옮겼을 수 있습니다.
+        </div>
+      )}
 
       {files.length > 0 && (
         <div className="mt-2 space-y-1 max-h-32 overflow-y-auto pr-0.5">
