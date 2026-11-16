@@ -34,6 +34,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
 
+[UninstallDelete]
+; AI Hybrid 를 처음 쓸 때 앱이 가중치의 .pt 사본을 만든다 (app\backend\app\engines_ai.py ensure_pt_suffix). 설치 목록에 없으니 따로 지운다.
+Type: files; Name: "{app}\app\basic_pt\*.pt"
+
 [Icons]
 Name: "{group}\Particle Lab"; Filename: "{app}\ParticleLab.exe"; WorkingDir: "{app}"
 Name: "{autodesktop}\Particle Lab"; Filename: "{app}\ParticleLab.exe"; WorkingDir: "{app}"; Tasks: desktopicon

@@ -1,4 +1,4 @@
-# Particle Lab — Windows 설치 파일을 만든다. 받는 사람은 Python · Node 를 설치할 필요가 없다.
+﻿# Particle Lab — Windows 설치 파일을 만든다. 받는 사람은 Python · Node 를 설치할 필요가 없다.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\build_win_app.ps1
 #     → dist\win\ParticleLab\ (설치될 폴더 그대로)  ·  dist\ParticleLab-Setup-<버전>.exe
@@ -24,16 +24,24 @@ $App   = Join-Path $Dist "win\ParticleLab"
 $Cache = Join-Path $Dist ".cache"
 
 function Step($n, $msg) { Write-Host "[$n/7] $msg" }
-function Run($exe) { & $exe @args; if ($LASTEXITCODE -ne 0) { throw "$exe 실패 (종료 코드 $LASTEXITCODE)" } }
+# 외부 프로그램은 종료 코드로만 성공을 판단한다. Windows PowerShell 5.1 은 "Stop" 상태에서 외부 프로그램이 stderr 에
+# 경고 한 줄만 써도 (pip · uvicorn 로그 등) 빌드를 끊으므로, 부르는 동안만 "Continue" 로 둔다 (함수 안에서만 바뀐다).
+function Run($exe) {
+    $ErrorActionPreference = "Continue"
+    & $exe @args
+    if ($LASTEXITCODE -ne 0) { throw "$exe 실패 (종료 코드 $LASTEXITCODE)" }
+}
+function Quiet($exe) { $ErrorActionPreference = "Continue"; & $exe @args 2>&1 | Out-Null }   # 실패해도 되는 정리 작업
 
 foreach ($f in "basic_pt\U-net++", "basic_pt\yolo_11") { if (-not (Test-Path $f)) { throw "AI 가중치가 없습니다: $f" } }
 
 Step 1 "화면을 정적 파일로 내보내기"
 Push-Location app\frontend
-Run npm ci --no-audit --no-fund
+# npm.cmd · npx.cmd 로 부른다: npm 이 함께 까는 npm.ps1 은 Windows PowerShell 5.1 에서 Run 이 넘기는 인자(@args)를 못 읽는다
+Run npm.cmd ci --no-audit --no-fund
 if (Test-Path out) { Remove-Item out -Recurse -Force }
 $env:BUILD_TARGET = "export"
-Run npx next build
+Run npx.cmd next build
 Remove-Item Env:BUILD_TARGET
 Pop-Location
 
@@ -55,7 +63,7 @@ Run $Py -m pip install --quiet --no-warn-script-location --upgrade pip
 Run $Py -m pip install --quiet --no-warn-script-location torch torchvision --index-url https://download.pytorch.org/whl/cpu
 Run $Py -m pip install --quiet --no-warn-script-location -r app\backend\requirements.txt
 # 설치 도구는 받는 사람에게 필요 없다. pip 는 자기 자신을 지우다 오류를 내므로 폴더를 직접 지운다.
-& $Py -m pip uninstall --quiet -y setuptools wheel 2>$null | Out-Null
+Quiet $Py -m pip uninstall --quiet -y setuptools wheel
 Get-ChildItem "$App\Lib\site-packages" -Directory | Where-Object { $_.Name -eq "pip" -or $_.Name -like "pip-*" } | Remove-Item -Recurse -Force
 Remove-Item "$App\Scripts\pip*.exe" -ErrorAction SilentlyContinue
 
@@ -63,18 +71,22 @@ Step 5 "프로그램 파일"
 $Dest = Join-Path $App "app"
 foreach ($f in "launcher.py", "hybrid_core.py", "evaluate.py", "unet_models.py", "unet_module.py", "unet_trainer.py",
                "weight_maps.py", "particle_morphology.py", "arial.ttf", "logo.png", "app.ico") { Copy-Item $f $Dest }
-foreach ($d in "particle_core", "basic_pt", "demo_images") { Copy-Item $d $Dest -Recurse }
+foreach ($d in "particle_core", "demo_images") { Copy-Item $d $Dest -Recurse }
+# 가중치는 원본 두 개만 넣는다. 개발 중 AI 를 돌리면 basic_pt 에 yolo_11.pt 사본(55MB)이 생기는데, 같이 넣으면 설치 파일만 커진다.
+New-Item -ItemType Directory -Force -Path "$Dest\basic_pt" | Out-Null
+foreach ($f in "basic_pt\U-net++", "basic_pt\yolo_11") { Copy-Item -LiteralPath $f "$Dest\basic_pt" }
 Copy-Item app\backend "$Dest\app" -Recurse
 Copy-Item app\frontend\out "$Dest\app\frontend" -Recurse
 Get-ChildItem $Dest -Recurse -Directory -Filter "__pycache__" | Remove-Item -Recurse -Force
 New-Item -ItemType File -Force -Path "$Dest\.bundled" | Out-Null     # launcher.py 가 이 파일로 "설치된 앱"임을 안다
 # 설치 폴더에는 .pyc 를 쓰지 않으므로 미리 만들어 둔다 (없으면 켤 때마다 다시 번역해서 느리다)
-& $Py -m compileall -q -j 0 --invalidation-mode unchecked-hash "$App\Lib" $Dest | Out-Null
+Quiet $Py -m compileall -q -j 0 --invalidation-mode unchecked-hash "$App\Lib" $Dest
 
 Step 6 "실행 파일"
 Push-Location tools\win
 Run rc /nologo /fo "$Dist\win\stub.res" stub.rc
-Run cl /nologo /O2 /MD /W3 "/DPYVER=$PyDll" stub.c "$Dist\win\stub.res" "/Fo$Dist\win\stub.obj" "/Fe$App\ParticleLab.exe" /link /SUBSYSTEM:WINDOWS user32.lib
+# /utf-8: stub.c 의 한글 오류 문구를 UTF-8 로 읽게 한다 (없으면 시스템 코드 페이지로 읽어 글자가 깨진다)
+Run cl /nologo /utf-8 /O2 /MD /W3 "/DPYVER=$PyDll" stub.c "$Dist\win\stub.res" "/Fo$Dist\win\stub.obj" "/Fe$App\ParticleLab.exe" /link /SUBSYSTEM:WINDOWS /MANIFEST:NO user32.lib
 Pop-Location
 Remove-Item "$Dist\win\stub.res", "$Dist\win\stub.obj" -ErrorAction SilentlyContinue
 
@@ -85,8 +97,12 @@ Pop-Location
 
 Step 7 "설치 프로그램"
 $Iscc = (Get-Command iscc -ErrorAction SilentlyContinue).Source
-if (-not $Iscc) { $Iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
-if (-not (Test-Path $Iscc)) { throw "Inno Setup 6 이 없습니다 (choco install innosetup)" }
+# 관리자 권한 설치는 Program Files (x86), winget · 사용자 설치는 %LOCALAPPDATA%\Programs 에 들어간다
+if (-not $Iscc) {
+    $Iscc = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe") |
+        Where-Object { Test-Path $_ } | Select-Object -First 1
+}
+if (-not $Iscc) { throw "Inno Setup 6 이 없습니다 (winget install JRSoftware.InnoSetup 또는 choco install innosetup)" }
 Run $Iscc /Qp "/DAppVersion=$Version" "/DSourceDir=$App" "/DOutDir=$Dist" tools\win\installer.iss
 
 $Setup = Join-Path $Dist "ParticleLab-Setup-$Version.exe"
