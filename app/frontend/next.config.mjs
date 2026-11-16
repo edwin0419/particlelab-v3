@@ -9,6 +9,8 @@ const BUILD_TARGET = process.env.BUILD_TARGET || "standalone";
 const nextConfig = {
   reactStrictMode: true,
   output: BUILD_TARGET === "export" ? "export" : "standalone",
+  // export 모드: /home → out/home/index.html 로 내보내야 FastAPI 정적 서빙에서 주소를 직접 열거나 새로고침해도 열린다
+  trailingSlash: BUILD_TARGET === "export",
   // export 모드는 같은 origin (FastAPI가 정적+API 동시 서빙) → 상대 경로
   // standalone 모드는 별도 포트 → 절대 URL
   env: {

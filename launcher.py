@@ -1,4 +1,4 @@
-"""Particle Lab v2 — 데스크탑 런처.
+"""Particle Lab — 데스크탑 런처.
 
 더블클릭 한 번으로 uvicorn(백엔드 + 정적 프런트)을 띄우고
 pywebview 윈도우에 띄운다. Node.js 런타임 불필요 — 프런트는
@@ -9,6 +9,12 @@ app/frontend/out/ 의 Next.js export 산출물을 FastAPI 가 직접 서빙.
 
 실행:
     python launcher.py
+
+macOS 앱(.app · dmg)은 tools/build_mac_app.sh, Windows 설치 파일은 tools/build_win_app.ps1 이 이 파일을 번들에 넣어 만든다.
+번들로 실행될 때(PLAB_BUNDLED=1 또는 옆에 .bundled 파일)는 결과를 문서/Particle Lab 에 쓰고,
+로그는 macOS ~/Library/Logs/Particle Lab, Windows %LOCALAPPDATA%\\Particle Lab\\Logs 의 app.log 에 쓴다.
+
+    python launcher.py --selftest    창 없이 서버만 올려 화면 · API 가 응답하는지 확인하고 끝낸다 (빌드 검증용)
 """
 from __future__ import annotations
 
@@ -33,6 +39,24 @@ else:
     PROJECT_ROOT = Path(__file__).resolve().parent
 
 BACKEND_DIR = PROJECT_ROOT / "app" / "backend"
+
+# 앱 번들 안에는 쓸 수 없다 (읽기 전용 dmg · 서명) → 결과와 로그는 사용자 폴더로 보낸다
+BUNDLED = os.environ.get("PLAB_BUNDLED") == "1" or (PROJECT_ROOT / ".bundled").exists()
+SELFTEST = "--selftest" in sys.argv[1:]
+if BUNDLED and not SELFTEST:
+    os.environ.setdefault("PLAB_DATA_DIR", str(Path.home() / "Documents" / "Particle Lab"))
+    if sys.platform.startswith("win"):
+        _log_dir = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "Particle Lab" / "Logs"
+    else:
+        _log_dir = Path.home() / "Library" / "Logs" / "Particle Lab"
+    try:
+        _log_dir.mkdir(parents=True, exist_ok=True)
+        Path(os.environ["PLAB_DATA_DIR"]).mkdir(parents=True, exist_ok=True)
+        _log = open(_log_dir / "app.log", "w", buffering=1, encoding="utf-8")
+    except OSError:
+        _log = open(os.devnull, "w", encoding="utf-8")
+    # 창만 있는 앱에는 표준 출력이 없다 (Windows 에서는 None) → 로그 파일로 돌린다
+    sys.stdout = sys.stderr = _log
 FRONT_OUT = PROJECT_ROOT / "app" / "frontend" / "out"
 DEFAULT_DOWNLOAD_DIR = str(Path.home() / "Downloads")
 
@@ -422,6 +446,11 @@ def _die(msg: str) -> "None":
             ctypes.windll.user32.MessageBoxW(0, msg, "Particle Lab — 오류", 0x10)
         except Exception:
             pass
+    elif sys.platform == "darwin":  # 앱으로 실행하면 터미널이 없으므로 대화상자로 알린다
+        try:
+            subprocess.run(["osascript", "-e", 'display alert "Particle Lab — 오류" message ' + '"' + msg.replace('"', "'") + '"'], timeout=60)
+        except Exception:
+            pass
     sys.exit(1)
 
 
@@ -496,10 +525,22 @@ def main() -> None:
 
     print(f"[launcher] backend up → {base_url}")
 
+    if SELFTEST:
+        for path in ("/api/health", "/home/", "/", "/intro/", "/hybrid-lab/", "/intro/voice/intro.json"):
+            with urllib.request.urlopen(base_url + path, timeout=10) as r:
+                body = r.read()
+                print(f"[selftest] {path} → {r.status} ({len(body)} bytes)")
+                if path == "/api/health":
+                    print("[selftest]", body.decode("utf-8", "replace"))
+        server.should_exit = True
+        t.join(timeout=5.0)
+        print("[selftest] OK")
+        return
+
     js_api = JsApi()
     window = webview.create_window(
-        "Particle Lab v2",
-        url=base_url,
+        "Particle Lab",
+        url=f"{base_url}/home/",
         width=1440,
         height=900,
         min_size=(1024, 700),

@@ -50,6 +50,21 @@ cd app\frontend; npm run dev
 
 코드를 수정한 뒤에는 `SETUP.command` 를 다시 실행하세요. 로그는 `logs/backend.log`, `logs/frontend.log`.
 
+## macOS 앱 (dmg) 만들기
+
+`tools/build_mac_app.sh` 를 실행하면 `dist/Particle Lab.app` 과 `dist/ParticleLab-<버전>-arm64.dmg` 가 나옵니다 (Apple Silicon 전용, 약 700MB). 받는 사람은 dmg 를 열어 앱을 응용 프로그램으로 끌어다 놓기만 하면 되고, Python · Node 를 설치할 필요가 없습니다.
+
+- 앱은 창 하나로 뜨고 (`launcher.py`), 분석 결과는 `~/Documents/Particle Lab/runs`, 로그는 `~/Library/Logs/Particle Lab/app.log` 에 저장됩니다.
+- 서명은 임시 서명입니다. 다른 Mac 에서 처음 열 때는 우클릭 → 열기가 필요합니다 (Apple 개발자 서명 · 공증은 포함되어 있지 않습니다).
+- 만드는 Mac 에는 `SETUP.command` 를 마친 환경, Xcode 명령줄 도구, 인터넷(파이썬 런타임을 한 번 내려받음)이 필요합니다.
+
+## Windows 설치 파일 만들기
+
+GitHub 저장소의 **Actions → Windows installer → Run workflow** 를 누르면 GitHub 의 Windows 서버가 `ParticleLab-Setup-<버전>.exe` 를 만들고, 실행 기록의 Artifacts 에서 내려받을 수 있습니다 (`.github/workflows/windows-installer.yml`). Windows PC 에서 직접 만들려면 `tools\build_win_app.ps1` 을 실행합니다.
+
+- 받는 사람은 설치 파일만 실행하면 됩니다 (관리자 권한 · Python · Node 불필요). PyTorch 는 CPU 판이 들어가므로 AI Hybrid 는 GPU 판보다 느립니다.
+- 서명하지 않은 설치 파일이라 처음 실행할 때 Windows SmartScreen 경고가 뜹니다 ("추가 정보 → 실행").
+
 ## 화면
 
 - **홈** `/home` — 프로그램을 켜면 처음 열리는 화면. 원본과 분할 결과 비교 그림, 각 화면으로 가는 카드.

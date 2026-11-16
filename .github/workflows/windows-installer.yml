@@ -1,0 +1,44 @@
+# Windows 설치 파일(ParticleLab-Setup-<버전>.exe)을 GitHub 의 Windows 서버에서 만든다.
+# 실행: GitHub → Actions → "Windows installer" → Run workflow.  또는 v 로 시작하는 태그를 올리면 자동으로 돈다.
+# 결과: 실행 기록 맨 아래 Artifacts 의 "ParticleLab-Windows-Setup" (zip 안에 설치 파일).
+name: Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/frontend/package-lock.json
+
+      # cl · rc 를 PATH 에 올린다 (실행 파일 ParticleLab.exe 를 만들 때 쓴다)
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+
+      - name: Build
+        shell: pwsh
+        run: ./tools/build_win_app.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ParticleLab-Windows-Setup
+          path: dist/ParticleLab-Setup-*.exe
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30

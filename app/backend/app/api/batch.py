@@ -30,7 +30,8 @@ from .tuner import parse_params  # noqa: E402
 
 router = APIRouter(prefix="/api/batch", tags=["batch"])
 
-RUNS_DIR = PROJECT_ROOT / "runs"
+# 결과 폴더. 앱 번들(.app)로 실행할 때는 번들 안에 쓸 수 없으므로 런처가 PLAB_DATA_DIR 로 바깥 폴더를 정해 준다.
+RUNS_DIR = (Path(os.environ["PLAB_DATA_DIR"]).expanduser() if os.environ.get("PLAB_DATA_DIR") else PROJECT_ROOT) / "runs"
 
 
 def _safe_name(s: str) -> str:
