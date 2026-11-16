@@ -1,0 +1,1768 @@
+{
+ "crop_mode": {
+  "a": {
+   "label": "안 자름",
+   "cap": "찾은 입자 159개",
+   "w": 640,
+   "h": 480,
+   "n_before": 159,
+   "n_after": 138,
+   "n_labels": 297,
+   "meta": {}
+  },
+  "b": {
+   "label": "비율로 자름 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "crop_ratio": {
+  "a": {
+   "label": "0.03",
+   "cap": "잘라낸 높이 15 px",
+   "w": 640,
+   "h": 465,
+   "n_before": 155,
+   "n_after": 133,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "0.074 (기본)",
+   "cap": "잘라낸 높이 36 px",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "crop_px": {
+  "a": {
+   "label": "0 px",
+   "cap": "잘라낸 높이 0 px",
+   "w": 640,
+   "h": 480,
+   "n_before": 159,
+   "n_after": 138,
+   "n_labels": 297,
+   "meta": {}
+  },
+  "b": {
+   "label": "36 px",
+   "cap": "잘라낸 높이 36 px",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "brightness": {
+  "a": {
+   "label": "−40",
+   "cap": "최종 입자 120개",
+   "w": 640,
+   "h": 444,
+   "n_before": 150,
+   "n_after": 120,
+   "n_labels": 286,
+   "meta": {}
+  },
+  "b": {
+   "label": "+40",
+   "cap": "최종 입자 130개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 286,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "contrast": {
+  "a": {
+   "label": "0.6",
+   "cap": "최종 입자 133개",
+   "w": 640,
+   "h": 444,
+   "n_before": 152,
+   "n_after": 133,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "1.6",
+   "cap": "최종 입자 140개",
+   "w": 640,
+   "h": 444,
+   "n_before": 159,
+   "n_after": 140,
+   "n_labels": 294,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "gamma": {
+  "a": {
+   "label": "0.6",
+   "cap": "최종 입자 111개",
+   "w": 640,
+   "h": 444,
+   "n_before": 150,
+   "n_after": 111,
+   "n_labels": 298,
+   "meta": {}
+  },
+  "b": {
+   "label": "1.8",
+   "cap": "최종 입자 132개",
+   "w": 640,
+   "h": 444,
+   "n_before": 153,
+   "n_after": 132,
+   "n_labels": 290,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "use_clahe": {
+  "a": {
+   "label": "끔 (기본)",
+   "cap": "최종 입자 130개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "켬",
+   "cap": "최종 입자 134개",
+   "w": 640,
+   "h": 444,
+   "n_before": 153,
+   "n_after": 134,
+   "n_labels": 278,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "clahe_clip": {
+  "a": {
+   "label": "0.5",
+   "cap": "최종 입자 127개",
+   "w": 640,
+   "h": 444,
+   "n_before": 144,
+   "n_after": 127,
+   "n_labels": 281,
+   "meta": {}
+  },
+  "b": {
+   "label": "10",
+   "cap": "최종 입자 136개",
+   "w": 640,
+   "h": 444,
+   "n_before": 156,
+   "n_after": 136,
+   "n_labels": 282,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "clahe_tile": {
+  "a": {
+   "label": "4",
+   "cap": "최종 입자 130개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 286,
+   "meta": {}
+  },
+  "b": {
+   "label": "24",
+   "cap": "최종 입자 110개",
+   "w": 640,
+   "h": 444,
+   "n_before": 169,
+   "n_after": 110,
+   "n_labels": 448,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "use_usm": {
+  "a": {
+   "label": "끔 (기본)",
+   "cap": "최종 입자 130개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "켬",
+   "cap": "최종 입자 108개",
+   "w": 640,
+   "h": 444,
+   "n_before": 156,
+   "n_after": 108,
+   "n_labels": 348,
+   "meta": {}
+  },
+  "zoom": true
+ },
+ "usm_amount": {
+  "a": {
+   "label": "0.3",
+   "cap": "최종 입자 123개",
+   "w": 640,
+   "h": 444,
+   "n_before": 152,
+   "n_after": 123,
+   "n_labels": 297,
+   "meta": {}
+  },
+  "b": {
+   "label": "2.5",
+   "cap": "최종 입자 85개",
+   "w": 640,
+   "h": 444,
+   "n_before": 176,
+   "n_after": 85,
+   "n_labels": 424,
+   "meta": {}
+  },
+  "zoom": true
+ },
+ "usm_radius": {
+  "a": {
+   "label": "1.0",
+   "cap": "최종 입자 112개",
+   "w": 640,
+   "h": 444,
+   "n_before": 153,
+   "n_after": 112,
+   "n_labels": 311,
+   "meta": {}
+  },
+  "b": {
+   "label": "6.0",
+   "cap": "최종 입자 114개",
+   "w": 640,
+   "h": 444,
+   "n_before": 156,
+   "n_after": 114,
+   "n_labels": 390,
+   "meta": {}
+  },
+  "zoom": true
+ },
+ "blur_kernel": {
+  "a": {
+   "label": "1 × 1",
+   "cap": "찾은 입자 157개",
+   "w": 640,
+   "h": 444,
+   "n_before": 157,
+   "n_after": 42,
+   "n_labels": 563,
+   "meta": {}
+  },
+  "b": {
+   "label": "11 × 11",
+   "cap": "찾은 입자 144개",
+   "w": 640,
+   "h": 444,
+   "n_before": 144,
+   "n_after": 136,
+   "n_labels": 271,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "enhance_edges": {
+  "a": {
+   "label": "끔 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "켬",
+   "cap": "찾은 입자 158개",
+   "w": 640,
+   "h": 444,
+   "n_before": 158,
+   "n_after": 33,
+   "n_labels": 283,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "edge_method": {
+  "a": {
+   "label": "Laplacian",
+   "cap": "찾은 입자 158개",
+   "w": 640,
+   "h": 444,
+   "n_before": 158,
+   "n_after": 33,
+   "n_labels": 283,
+   "meta": {}
+  },
+  "b": {
+   "label": "Sobel X",
+   "cap": "찾은 입자 180개",
+   "w": 640,
+   "h": 444,
+   "n_before": 180,
+   "n_after": 73,
+   "n_labels": 449,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "edge_weight": {
+  "a": {
+   "label": "0.2",
+   "cap": "찾은 입자 150개",
+   "w": 640,
+   "h": 444,
+   "n_before": 150,
+   "n_after": 137,
+   "n_labels": 270,
+   "meta": {}
+  },
+  "b": {
+   "label": "1.5",
+   "cap": "찾은 입자 175개",
+   "w": 640,
+   "h": 444,
+   "n_before": 175,
+   "n_after": 23,
+   "n_labels": 648,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "edge_kernel": {
+  "a": {
+   "label": "1",
+   "cap": "찾은 입자 155개",
+   "w": 640,
+   "h": 444,
+   "n_before": 155,
+   "n_after": 142,
+   "n_labels": 275,
+   "meta": {}
+  },
+  "b": {
+   "label": "5",
+   "cap": "찾은 입자 177개",
+   "w": 640,
+   "h": 444,
+   "n_before": 177,
+   "n_after": 46,
+   "n_labels": 529,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "marker_method": {
+  "a": {
+   "label": "peak_local_max (기본)",
+   "cap": "나눈 조각 287개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "erosion",
+   "cap": "나눈 조각 214개",
+   "w": 640,
+   "h": 444,
+   "n_before": 130,
+   "n_after": 87,
+   "n_labels": 214,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "peak_min_distance": {
+  "a": {
+   "label": "2",
+   "cap": "나눈 조각 403개",
+   "w": 640,
+   "h": 444,
+   "n_before": 124,
+   "n_after": 116,
+   "n_labels": 403,
+   "meta": {}
+  },
+  "b": {
+   "label": "15",
+   "cap": "나눈 조각 181개",
+   "w": 640,
+   "h": 444,
+   "n_before": 141,
+   "n_after": 89,
+   "n_labels": 181,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "distance_threshold": {
+  "a": {
+   "label": "0.2",
+   "cap": "나눈 조각 209개",
+   "w": 640,
+   "h": 444,
+   "n_before": 132,
+   "n_after": 83,
+   "n_labels": 209,
+   "meta": {}
+  },
+  "b": {
+   "label": "0.6",
+   "cap": "나눈 조각 46개",
+   "w": 640,
+   "h": 444,
+   "n_before": 34,
+   "n_after": 9,
+   "n_labels": 46,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "dilate_kernel": {
+  "a": {
+   "label": "3",
+   "cap": "나눈 조각 88개",
+   "w": 640,
+   "h": 444,
+   "n_before": 66,
+   "n_after": 29,
+   "n_labels": 88,
+   "meta": {}
+  },
+  "b": {
+   "label": "9",
+   "cap": "나눈 조각 88개",
+   "w": 640,
+   "h": 444,
+   "n_before": 66,
+   "n_after": 29,
+   "n_labels": 88,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "dilate_iter": {
+  "a": {
+   "label": "1",
+   "cap": "나눈 조각 88개",
+   "w": 640,
+   "h": 444,
+   "n_before": 66,
+   "n_after": 29,
+   "n_labels": 88,
+   "meta": {}
+  },
+  "b": {
+   "label": "4",
+   "cap": "나눈 조각 88개",
+   "w": 640,
+   "h": 444,
+   "n_before": 66,
+   "n_after": 29,
+   "n_labels": 88,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "erosion_kernel": {
+  "a": {
+   "label": "3",
+   "cap": "나눈 조각 155개",
+   "w": 640,
+   "h": 444,
+   "n_before": 81,
+   "n_after": 37,
+   "n_labels": 155,
+   "meta": {}
+  },
+  "b": {
+   "label": "9",
+   "cap": "나눈 조각 145개",
+   "w": 640,
+   "h": 444,
+   "n_before": 111,
+   "n_after": 66,
+   "n_labels": 145,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "erosion_iter": {
+  "a": {
+   "label": "1",
+   "cap": "나눈 조각 155개",
+   "w": 640,
+   "h": 444,
+   "n_before": 81,
+   "n_after": 37,
+   "n_labels": 155,
+   "meta": {}
+  },
+  "b": {
+   "label": "4",
+   "cap": "나눈 조각 145개",
+   "w": 640,
+   "h": 444,
+   "n_before": 111,
+   "n_after": 66,
+   "n_labels": 145,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "blob_min_sigma": {
+  "a": {
+   "label": "1",
+   "cap": "나눈 조각 310개",
+   "w": 640,
+   "h": 444,
+   "n_before": 154,
+   "n_after": 100,
+   "n_labels": 310,
+   "meta": {}
+  },
+  "b": {
+   "label": "8",
+   "cap": "나눈 조각 221개",
+   "w": 640,
+   "h": 444,
+   "n_before": 152,
+   "n_after": 110,
+   "n_labels": 221,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "blob_max_sigma": {
+  "a": {
+   "label": "5",
+   "cap": "나눈 조각 339개",
+   "w": 640,
+   "h": 444,
+   "n_before": 154,
+   "n_after": 132,
+   "n_labels": 339,
+   "meta": {}
+  },
+  "b": {
+   "label": "30 (기본)",
+   "cap": "나눈 조각 314개",
+   "w": 640,
+   "h": 444,
+   "n_before": 147,
+   "n_after": 132,
+   "n_labels": 314,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "blob_num_sigma": {
+  "a": {
+   "label": "2",
+   "cap": "나눈 조각 394개",
+   "w": 640,
+   "h": 444,
+   "n_before": 124,
+   "n_after": 79,
+   "n_labels": 394,
+   "meta": {}
+  },
+  "b": {
+   "label": "20",
+   "cap": "나눈 조각 309개",
+   "w": 640,
+   "h": 444,
+   "n_before": 146,
+   "n_after": 133,
+   "n_labels": 309,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "blob_threshold": {
+  "a": {
+   "label": "0.01",
+   "cap": "나눈 조각 314개",
+   "w": 640,
+   "h": 444,
+   "n_before": 147,
+   "n_after": 132,
+   "n_labels": 314,
+   "meta": {}
+  },
+  "b": {
+   "label": "1.0",
+   "cap": "나눈 조각 302개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 127,
+   "n_labels": 302,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "min_size": {
+  "a": {
+   "label": "0",
+   "cap": "나눈 조각 301개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 301,
+   "meta": {}
+  },
+  "b": {
+   "label": "400",
+   "cap": "나눈 조각 164개",
+   "w": 640,
+   "h": 444,
+   "n_before": 133,
+   "n_after": 117,
+   "n_labels": 164,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "morph_on": {
+  "a": {
+   "label": "사용 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "사용 안 함",
+   "cap": "찾은 입자 209개",
+   "w": 640,
+   "h": 444,
+   "n_before": 209,
+   "n_after": 110,
+   "n_labels": 422,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "morph_open": {
+  "a": {
+   "label": "커널 3 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "커널 11",
+   "cap": "찾은 입자 42개",
+   "w": 640,
+   "h": 444,
+   "n_before": 42,
+   "n_after": 40,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "morph_close": {
+  "a": {
+   "label": "커널 3 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "커널 11",
+   "cap": "찾은 입자 44개",
+   "w": 640,
+   "h": 444,
+   "n_before": 44,
+   "n_after": 29,
+   "n_labels": 243,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "morph_erode": {
+  "a": {
+   "label": "커널 3 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "커널 9",
+   "cap": "찾은 입자 74개",
+   "w": 640,
+   "h": 444,
+   "n_before": 74,
+   "n_after": 62,
+   "n_labels": 256,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "morph_dilate": {
+  "a": {
+   "label": "커널 3 (기본)",
+   "cap": "찾은 입자 149개",
+   "w": 640,
+   "h": 444,
+   "n_before": 149,
+   "n_after": 130,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "커널 9",
+   "cap": "찾은 입자 103개",
+   "w": 640,
+   "h": 444,
+   "n_before": 103,
+   "n_after": 97,
+   "n_labels": 247,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "high_thresh": {
+  "a": {
+   "label": "0.50",
+   "cap": "찾은 입자 235개",
+   "w": 640,
+   "h": 444,
+   "n_before": 235,
+   "n_after": 215,
+   "n_labels": 290,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 292,
+    "tau": 12.296219679888557
+   }
+  },
+  "b": {
+   "label": "0.95",
+   "cap": "찾은 입자 238개",
+   "w": 640,
+   "h": 444,
+   "n_before": 238,
+   "n_after": 204,
+   "n_labels": 293,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 297,
+    "tau": 12.736924713733151
+   }
+  },
+  "zoom": false
+ },
+ "low_thresh": {
+  "a": {
+   "label": "0.10",
+   "cap": "찾은 입자 223개",
+   "w": 640,
+   "h": 444,
+   "n_before": 223,
+   "n_after": 190,
+   "n_labels": 278,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "0.70",
+   "cap": "찾은 입자 237개",
+   "w": 640,
+   "h": 444,
+   "n_before": 237,
+   "n_after": 217,
+   "n_labels": 293,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": true
+ },
+ "boundary_thickness": {
+  "a": {
+   "label": "1 px",
+   "cap": "찾은 입자 230개",
+   "w": 640,
+   "h": 444,
+   "n_before": 230,
+   "n_after": 205,
+   "n_labels": 284,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "9 px",
+   "cap": "찾은 입자 238개",
+   "w": 640,
+   "h": 444,
+   "n_before": 238,
+   "n_after": 218,
+   "n_labels": 293,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": true
+ },
+ "min_anchor_area": {
+  "a": {
+   "label": "0",
+   "cap": "찾은 입자 240개",
+   "w": 640,
+   "h": 444,
+   "n_before": 240,
+   "n_after": 217,
+   "n_labels": 297,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 301,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "500",
+   "cap": "찾은 입자 123개",
+   "w": 640,
+   "h": 444,
+   "n_before": 123,
+   "n_after": 109,
+   "n_labels": 141,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 141,
+    "tau": 24.799312696269915
+   }
+  },
+  "zoom": false
+ },
+ "balance_floor": {
+  "a": {
+   "label": "0",
+   "cap": "찾은 입자 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "0.6",
+   "cap": "찾은 입자 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 292,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "tau_scale": {
+  "a": {
+   "label": "0.5",
+   "cap": "찾은 입자 235개",
+   "w": 640,
+   "h": 444,
+   "n_before": 235,
+   "n_after": 214,
+   "n_labels": 290,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 6.222720127479703
+   }
+  },
+  "b": {
+   "label": "2.5",
+   "cap": "찾은 입자 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 31.113600637398516
+   }
+  },
+  "zoom": false
+ },
+ "yolo_conf": {
+  "a": {
+   "label": "0.05",
+   "cap": "AI 2가 찾은 입자 336개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 336,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "0.70",
+   "cap": "AI 2가 찾은 입자 270개 · 최종 235개",
+   "w": 640,
+   "h": 444,
+   "n_before": 235,
+   "n_after": 213,
+   "n_labels": 290,
+   "meta": {
+    "n_yolo": 270,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "yolo_iou": {
+  "a": {
+   "label": "0.10",
+   "cap": "AI 2가 찾은 입자 306개 · 최종 235개",
+   "w": 640,
+   "h": 444,
+   "n_before": 235,
+   "n_after": 213,
+   "n_labels": 290,
+   "meta": {
+    "n_yolo": 306,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "0.95",
+   "cap": "AI 2가 찾은 입자 467개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 215,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 467,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "yolo_imgsz": {
+  "a": {
+   "label": "320",
+   "cap": "AI 2가 찾은 입자 288개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 290,
+   "meta": {
+    "n_yolo": 288,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "1280",
+   "cap": "AI 2가 찾은 입자 330개 · 최종 235개",
+   "w": 640,
+   "h": 444,
+   "n_before": 235,
+   "n_after": 212,
+   "n_labels": 290,
+   "meta": {
+    "n_yolo": 330,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "yolo_round_strength": {
+  "a": {
+   "label": "0",
+   "cap": "AI 2가 찾은 입자 325개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 215,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "10",
+   "cap": "AI 2가 찾은 입자 325개 · 최종 227개",
+   "w": 640,
+   "h": 444,
+   "n_before": 227,
+   "n_after": 200,
+   "n_labels": 280,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": true
+ },
+ "yolo_remove_overlaps": {
+  "a": {
+   "label": "켬 (기본)",
+   "cap": "찾은 입자 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "끔",
+   "cap": "찾은 입자 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": true
+ },
+ "yolo_remove_enclosed": {
+  "a": {
+   "label": "켬 (기본)",
+   "cap": "AI 2가 찾은 입자 325개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "끔",
+   "cap": "AI 2가 찾은 입자 325개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "enclosed_ratio": {
+  "a": {
+   "label": "0.5",
+   "cap": "AI 2가 찾은 입자 325개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "1.0",
+   "cap": "AI 2가 찾은 입자 325개 · 최종 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "unet_imgsz": {
+  "a": {
+   "label": "256",
+   "cap": "찾은 입자 197개",
+   "w": 640,
+   "h": 444,
+   "n_before": 197,
+   "n_after": 139,
+   "n_labels": 244,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 247,
+    "tau": 13.402068643008962
+   }
+  },
+  "b": {
+   "label": "비움 (기본)",
+   "cap": "찾은 입자 236개",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "filter_border": {
+  "a": {
+   "label": "켬 (기본)",
+   "cap": "남은 입자 236개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "끔",
+   "cap": "남은 입자 291개 · D50 4.92 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 291,
+   "n_after": 239,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "min_contour_points": {
+  "a": {
+   "label": "0",
+   "cap": "남은 입자 241개 · D50 4.92 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 241,
+   "n_after": 213,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "b": {
+   "label": "80",
+   "cap": "남은 입자 2개 · D50 9.64 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 2,
+   "n_after": 1,
+   "n_labels": 287,
+   "meta": {}
+  },
+  "zoom": false
+ },
+ "min_diameter": {
+  "a": {
+   "label": "0 μm (기본)",
+   "cap": "남은 입자 236개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "4 μm",
+   "cap": "남은 입자 162개 · D50 5.96 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 162,
+   "n_after": 148,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "curvature_percentile": {
+  "a": {
+   "label": "0 (끔)",
+   "cap": "남은 입자 236개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "30",
+   "cap": "남은 입자 165개 · D50 5.26 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 165,
+   "n_after": 149,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "exclude_linear": {
+  "a": {
+   "label": "끔 (기본)",
+   "cap": "남은 입자 236개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "켬",
+   "cap": "남은 입자 189개 · D50 5.40 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 189,
+   "n_after": 169,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "linear_percentile": {
+  "a": {
+   "label": "5",
+   "cap": "남은 입자 224개 · D50 5.12 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 224,
+   "n_after": 203,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "40",
+   "cap": "남은 입자 142개 · D50 5.09 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 142,
+   "n_after": 128,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "exclude_dark": {
+  "a": {
+   "label": "끔 (기본)",
+   "cap": "남은 입자 236개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "켬",
+   "cap": "남은 입자 188개 · D50 5.55 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 188,
+   "n_after": 172,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "dark_percentile": {
+  "a": {
+   "label": "5",
+   "cap": "남은 입자 224개 · D50 5.20 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 224,
+   "n_after": 206,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "40",
+   "cap": "남은 입자 141개 · D50 5.93 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 141,
+   "n_after": 129,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "dia_lower": {
+  "a": {
+   "label": "0 (끔)",
+   "cap": "남은 입자 214개 · D50 5.04 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "25",
+   "cap": "남은 입자 162개 · D50 5.72 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 162,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "dia_upper": {
+  "a": {
+   "label": "0 (끔)",
+   "cap": "남은 입자 214개 · D50 5.04 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "25",
+   "cap": "남은 입자 163개 · D50 4.54 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 163,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "circ_enable": {
+  "a": {
+   "label": "켬 (기본)",
+   "cap": "남은 입자 214개 · D50 5.04 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "끔",
+   "cap": "남은 입자 228개 · D50 5.08 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 228,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "circ_mode": {
+  "a": {
+   "label": "값 0.7 (기본)",
+   "cap": "남은 입자 214개 · D50 5.04 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 214,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "백분위 5",
+   "cap": "남은 입자 221개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 221,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "circ_value": {
+  "a": {
+   "label": "0.50",
+   "cap": "남은 입자 225개 · D50 5.08 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 225,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "0.85",
+   "cap": "남은 입자 120개 · D50 4.60 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 120,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "circ_percentile": {
+  "a": {
+   "label": "5",
+   "cap": "남은 입자 221개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 221,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "40",
+   "cap": "남은 입자 140개 · D50 4.69 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 140,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "ar_enable": {
+  "a": {
+   "label": "켬 (최대값 1.3)",
+   "cap": "남은 입자 116개 · D50 5.02 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 116,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "끔",
+   "cap": "남은 입자 236개 · D50 5.07 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 236,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "ar_mode": {
+  "a": {
+   "label": "값 2.0 (기본)",
+   "cap": "남은 입자 228개 · D50 5.08 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 228,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "백분위 5",
+   "cap": "남은 입자 224개 · D50 5.09 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 224,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "ar_value": {
+  "a": {
+   "label": "1.2",
+   "cap": "남은 입자 57개 · D50 4.91 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 57,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "2.0 (기본)",
+   "cap": "남은 입자 228개 · D50 5.08 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 228,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ },
+ "ar_percentile": {
+  "a": {
+   "label": "5",
+   "cap": "남은 입자 224개 · D50 5.09 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 224,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "b": {
+   "label": "40",
+   "cap": "남은 입자 142개 · D50 5.09 μm",
+   "w": 640,
+   "h": 444,
+   "n_before": 236,
+   "n_after": 142,
+   "n_labels": 291,
+   "meta": {
+    "n_yolo": 325,
+    "K_unet_anchor": 295,
+    "tau": 12.445440254959406
+   }
+  },
+  "zoom": false
+ }
+}
