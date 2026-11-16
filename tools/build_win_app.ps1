@@ -54,7 +54,10 @@ Step 4 "패키지 설치 (PyTorch CPU 판 포함, 몇 분)"
 Run $Py -m pip install --quiet --no-warn-script-location --upgrade pip
 Run $Py -m pip install --quiet --no-warn-script-location torch torchvision --index-url https://download.pytorch.org/whl/cpu
 Run $Py -m pip install --quiet --no-warn-script-location -r app\backend\requirements.txt
-Run $Py -m pip uninstall --quiet -y pip setuptools wheel
+# 설치 도구는 받는 사람에게 필요 없다. pip 는 자기 자신을 지우다 오류를 내므로 폴더를 직접 지운다.
+& $Py -m pip uninstall --quiet -y setuptools wheel 2>$null | Out-Null
+Get-ChildItem "$App\Lib\site-packages" -Directory | Where-Object { $_.Name -eq "pip" -or $_.Name -like "pip-*" } | Remove-Item -Recurse -Force
+Remove-Item "$App\Scripts\pip*.exe" -ErrorAction SilentlyContinue
 
 Step 5 "프로그램 파일"
 $Dest = Join-Path $App "app"
@@ -71,7 +74,7 @@ New-Item -ItemType File -Force -Path "$Dest\.bundled" | Out-Null     # launcher.
 Step 6 "실행 파일"
 Push-Location tools\win
 Run rc /nologo /fo "$Dist\win\stub.res" stub.rc
-Run cl /nologo /O2 /MD /W3 "/DPYVER=$PyDll" stub.c "$Dist\win\stub.res" "/Fo$Dist\win\stub.obj" "/Fe$App\ParticleLab.exe" /link /SUBSYSTEM:WINDOWS
+Run cl /nologo /O2 /MD /W3 "/DPYVER=$PyDll" stub.c "$Dist\win\stub.res" "/Fo$Dist\win\stub.obj" "/Fe$App\ParticleLab.exe" /link /SUBSYSTEM:WINDOWS user32.lib
 Pop-Location
 Remove-Item "$Dist\win\stub.res", "$Dist\win\stub.obj" -ErrorAction SilentlyContinue
 
